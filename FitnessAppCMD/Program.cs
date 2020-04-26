@@ -5,6 +5,10 @@ namespace FitnessAppCMD
 {
     class Program
     {
+        /// <summary>
+        /// Основное приложени
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
             Console.WriteLine("Введите Ваше имя:");
