@@ -14,11 +14,13 @@ namespace FitnessAppBL.Model
     public class User
     {
         public string Name { get; }
-        public Gender Gender { get; }
-        public DateTime BirthDate { get; }
+        public Gender Gender { get; set; }
+        public DateTime BirthDate { get; set; }
         public double Weight { get; set; }
         public double Height { get; set; }
         public DateTime Birthdate { get; }
+
+        public int Age { get { return DateTime.Now.Year - BirthDate.Year; } }
 
         public User(
             string name, 
@@ -60,6 +62,18 @@ namespace FitnessAppBL.Model
             Weight = weight;
             Height = height;
         }
-        
+
+        public User(string userName)
+        {
+            if (userName is null || string.IsNullOrWhiteSpace(userName) || userName == "")
+            {
+                throw new ArgumentNullException("Имя не должно быть пустым", nameof(userName));
+            }
+            Name = userName;
+        }
+        public override string ToString()
+        {
+            return Name +" " + Age;
+        }
     }
 }

@@ -14,22 +14,65 @@ namespace FitnessAppCMD
             Console.WriteLine("Введите Ваше имя:");
             string username = Console.ReadLine();
 
-            Console.WriteLine("Введите Ваш пол:");
-            string gendername = Console.ReadLine();
+            var userController = new UserController(username);
 
-            Console.WriteLine("Введите дату Вашего рождения:");
-            DateTime birthdate = DateTime.Parse(Console.ReadLine());
+            if (userController.IsNewUser)
+            {
+                Console.WriteLine("Введите Ваш пол:");
+                string gender = Console.ReadLine();
+                userController.SetUserData(gender, DateParse(), DoubleParse("вес"), DoubleParse("рост"));
+            }
+            else { Console.WriteLine(userController.CurrentUser); }
+            Console.ReadLine();
 
-            Console.WriteLine("Введите Ваш вес:");
-            double weight = double.Parse(Console.ReadLine());
 
-            Console.WriteLine("Введите Ваш рост:");
-            double height = double.Parse(Console.ReadLine());
 
-            var userController = new UserController(username, gendername, birthdate, weight, height);
-            userController.Save();
+           
+
+            
 
 
         }
+        private static DateTime DateParse()
+        {
+            
+            while (true)
+            {
+                Console.WriteLine("Введите дату Вашего рождения (dd.MM.YYYY):");
+                string bDate = Console.ReadLine();
+                if (DateTime.TryParse(bDate, out DateTime res) != false)
+                {
+                    return res;
+                }
+                else
+                {
+                    Console.WriteLine("Введен некорректный формат для даты.");
+                }
+
+            }
+        }
+
+
+        private static double DoubleParse(string type)
+        {
+
+            while (true)
+            {
+                Console.WriteLine($"Введите Ваш {type}:");
+                string bDate = Console.ReadLine();
+                if (double.TryParse(bDate, out double res) != false)
+                {
+                    return res;
+                }
+                else
+                {
+                    Console.WriteLine($"Введен некорректный формат для {type}.");
+                }
+
+            }
+        }
+
+
+
     }
 }

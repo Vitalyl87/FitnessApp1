@@ -11,24 +11,56 @@ namespace FitnessAppBL.Controller
 {
     public class UserController
     {
-        public User User  {get;}
+        public List<User> Users  {get;}
+
+        public bool IsNewUser { get; set; } = false;
+
+        public User CurrentUser { get; }
         
-        public UserController(string userName, string genderName, DateTime bithDate, double weight, double height)
+        public UserController(string userName)
         {
-            var gender = new Gender(genderName);
-            User = new User(userName, gender, bithDate, weight, height);
+            if (userName is null)
+            {
+                throw new ArgumentNullException("Имя пользователя не может быть пустым", nameof(userName));
+            }
+
+            Users = GetUsersData();
+
+            CurrentUser = Users.SingleOrDefault(u => u.Name == userName);
+            if (CurrentUser == null)
+            {
+                CurrentUser = new User(userName);
+                IsNewUser = true;
+                Users.Add(CurrentUser);
+                Save();
+            }
+
+
         }
-        public UserController()
+        public List<User> GetUsersData()
         {
             var formatter = new BinaryFormatter();
 
             using (var fs = new FileStream("users.dat", FileMode.OpenOrCreate))
             {
-                if (formatter.Deserialize(fs) is User user)
+                if (fs.Length > 0 && formatter.Deserialize(fs) is List<User> user)
                 {
-                    User = user;
+                    return user;
+                }
+                else
+                {
+                    return new List<User>();
                 }
             }
+        }
+
+        public void SetUserData(string genderName, DateTime birthDate, double weight, double height )
+        {
+            CurrentUser.Gender = new Gender(genderName);
+            CurrentUser.BirthDate = birthDate;
+            CurrentUser.Weight = weight;
+            CurrentUser.Height = height;
+            Save();
         }
 
         public void Save()
@@ -37,7 +69,7 @@ namespace FitnessAppBL.Controller
 
             using (var fs = new FileStream("users.dat", FileMode.OpenOrCreate))
             {
-                formatter.Serialize(fs, User);
+                formatter.Serialize(fs, Users);
             }
         }
 
